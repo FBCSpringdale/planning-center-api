@@ -1,0 +1,9 @@
+schema_version: "1.1"
+name: schedule-volunteer-services
+expected_outcome: |
+  Exact request sequence: find the service type, GET plans with filter=future ordered by
+  sort_date, find the team (and optionally team position), POST to
+  /services/v2/service_types/{st}/plans/{plan}/team_members with person_id, team_id,
+  status "U" and prepare_notification true, then check status via the PlanPerson
+  (GET /people/{id}/plan_people or team_members?filter=confirmed) or the person's
+  schedules; mentions the accept/decline endpoints the volunteer uses.

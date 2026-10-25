@@ -1,0 +1,7 @@
+{
+  "name": "planning-center-api",
+  "description": "Complete reference for the Planning Center Online (PCO) REST API: all products, auth, pagination, webhooks, plus a Python client.",
+  "author": {
+    "name": "FBC Springdale"
+  }
+}

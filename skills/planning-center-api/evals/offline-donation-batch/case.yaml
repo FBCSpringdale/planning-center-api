@@ -1,0 +1,8 @@
+schema_version: "1.1"
+name: offline-donation-batch
+expected_outcome: |
+  Code that resolves fund names to Fund ids (GET /giving/v2/funds), creates a Batch
+  (POST /giving/v2/batches), posts each donation to POST /giving/v2/batches/{id}/donations
+  with payment_method "check", payment_check_number, amount converted to integer cents inside
+  an included Designation with a fund relationship and a person relationship, then commits
+  the batch (POST /giving/v2/batches/{id}/commit) and polls status until "committed".

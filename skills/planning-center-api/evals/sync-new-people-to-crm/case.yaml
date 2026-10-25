@@ -1,0 +1,8 @@
+schema_version: "1.1"
+name: sync-new-people-to-crm
+expected_outcome: |
+  A runnable Python script that queries GET /people/v2/people with where[updated_at][gte]
+  (or created_at) and where[status]=active, uses include=emails,phone_numbers, pages
+  with per_page=100 following links.next or offset, reads the X-PCO-API-Request-Rate-*
+  headers / handles 429 with Retry-After, sends a User-Agent, resolves included Email and
+  PhoneNumber records by relationship linkage (primary flag), and writes a CSV.
