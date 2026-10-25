@@ -22,7 +22,8 @@ Environment:
     PCO_APP_ID / PCO_SECRET        Personal Access Token pair (HTTP Basic)
     PCO_ACCESS_TOKEN               OAuth bearer token (takes precedence if set)
     PCO_API_VERSION                Optional X-PCO-API-Version (e.g. 2026-10-05); applies to every product
-    PCO_USER_AGENT                 Optional; default "pco_client.py (agent skill)"
+    PCO_USER_AGENT                 Recommended: your app name plus a contact URL or email, e.g.
+                                   "Acme Sync (it@acmechurch.org)"; defaults to a link to this repo
 """
 from __future__ import annotations
 
@@ -38,6 +39,7 @@ from typing import Any, Dict, Iterator, List, Optional
 
 BASE = "https://api.planningcenteronline.com"
 UPLOAD = "https://upload.planningcenteronline.com/v2/files"
+DEFAULT_USER_AGENT = "pco_client.py (https://github.com/FBCSpringdale/planning-center-api)"
 
 
 class PCOError(Exception):
@@ -57,7 +59,7 @@ class PCO:
         else:
             raise ValueError("Provide access_token or app_id+secret")
         self.version = version
-        self.user_agent = user_agent or "pco_client.py (agent skill)"
+        self.user_agent = user_agent or DEFAULT_USER_AGENT
         self.max_retries = max_retries
         self.last_rate: Dict[str, Optional[str]] = {}
 
@@ -80,10 +82,14 @@ class PCO:
             headers["Content-Type"] = "application/json"
         if self.version:
             headers["X-PCO-API-Version"] = self.version
+        return self._send(method, url, data, headers)
+
+    def _send(self, method: str, url: str, data: Optional[bytes], headers: Dict[str, str],
+              timeout: int = 60) -> Dict[str, Any]:
         for attempt in range(self.max_retries + 1):
             req = urllib.request.Request(url, data=data, method=method, headers=headers)
             try:
-                with urllib.request.urlopen(req, timeout=60) as resp:
+                with urllib.request.urlopen(req, timeout=timeout) as resp:
                     self._record_rate(resp.headers)
                     raw = resp.read()
                     return json.loads(raw) if raw else {}
@@ -94,7 +100,8 @@ class PCO:
                     err = json.loads(raw) if raw else {}
                 except json.JSONDecodeError:
                     err = {"raw": raw.decode(errors="replace")}
-                if e.code == 429 and attempt < self.max_retries and method in ("GET", "HEAD"):
+                # 429s are rejected before processing, so replaying any method is safe.
+                if e.code == 429 and attempt < self.max_retries:
                     wait = int(e.headers.get("Retry-After") or 1)
                     time.sleep(wait)
                     continue
@@ -166,11 +173,9 @@ class PCO:
             content = f.read()
         body = (f"--{boundary}\r\nContent-Disposition: form-data; name=\"file\"; filename=\"{name}\"\r\n"
                 f"Content-Type: application/octet-stream\r\n\r\n").encode() + content + f"\r\n--{boundary}--\r\n".encode()
-        req = urllib.request.Request(UPLOAD, data=body, method="POST", headers={
-            "Authorization": self._auth, "User-Agent": self.user_agent,
-            "Content-Type": f"multipart/form-data; boundary={boundary}"})
-        with urllib.request.urlopen(req, timeout=120) as resp:
-            return json.loads(resp.read())["data"][0]["id"]
+        headers = {"Authorization": self._auth, "User-Agent": self.user_agent,
+                   "Content-Type": f"multipart/form-data; boundary={boundary}"}
+        return self._send("POST", UPLOAD, body, headers, timeout=120)["data"][0]["id"]
 
 
 # ---- JSON:API helpers -----------------------------------------------------

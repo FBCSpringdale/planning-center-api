@@ -57,7 +57,8 @@ Reachable from: /check_ins; /events/{e}/check_ins; /events/{e}/event_periods/{ep
 Check-ins made together (same "checked in by" person); unit of label printing.
 Endpoints: GET /stations/{station_id}/check_in_groups [filter: canceled, printed, ready, skipped]; …/{id}; GET /check_ins/{id}/check_in_group
 Attributes: check_ins_count; created_at; id; name_labels_count; print_status (ready | printed | canceled | skipped); security_labels_count; updated_at
-Relationships: check_ins -> CheckIn (to_many); event_period -> EventPeriod; print_station -> Station. Include: check_ins, event_period, print_station. Where: print_status
+Relationships: check_ins -> CheckIn (to_many); event_period -> EventPeriod; print_station -> Station. Include: check_ins, event_period, print_station. Where: none (filter by status with `?filter=` on the station path)
+Associations: check_ins -> CheckIn; event_period -> EventPeriod; print_station -> Station
 
 ## CheckInTime
 Links an EventTime and a Location to a CheckIn.
@@ -72,7 +73,7 @@ Attributes: app_source (only with ?fields); archived_at; created_at; enable_serv
 Relationships: campuses -> Campus (to_many). Include: attendance_types
 Order: created_at, name. Where: id, name
 Associations: attendance_types; check_ins [standard filters]; current_event_times -> EventTime; event_labels -> EventLabel; event_periods -> EventPeriod; integration_links -> IntegrationLink; locations -> Location [filter: locations, root]; person_events -> PersonEvent
-Reachable from: /events; check_ins/{id}/event; event_periods/{id}/event; event_times/{id}/event; stations/{id}/station; locations/{id}/event; attendance_types/{id}/event; event_labels/{id}/event; person_events/{id}/event
+Reachable from: /events; check_ins/{id}/event; event_periods/{id}/event; event_times/{id}/event; stations/{id}/event; locations/{id}/event; attendance_types/{id}/event; event_labels/{id}/event; person_events/{id}/event
 
 ## EventLabel
 How many copies of a label to print for an event and for whom.
@@ -188,7 +189,7 @@ A roster row (read-only). Attributes: birthdate; demographic_avatar_url; first_n
 ## Station
 A check-in device, optionally tied to a printer.
 Endpoints: GET /stations; …/{id}
-Attributes: id; check_in_count (only with ?fields); closes_at (only with ?fields); created_at; input_type (scanner | keypad); input_type_options (all_input_types | only_keypad | only_scanner); mode (integer); name; next_shows_at (only with ?fields); online (boolean, only with ?fields); open_for_check_in (boolean, only with ?fields); timeout_seconds; updated_at
+Attributes: id; check_in_count (only with ?fields); closes_at (only with ?fields); created_at; input_type (scanner | keypad); input_type_options (all_input_types | only_keypad | only_scanner); mode (integer); name; next_shows_at (only with ?fields); online (boolean, only with ?fields); open_for_check_in (boolean, only with ?fields); seconds_until_closes_at (integer, only with ?fields); seconds_until_next_shows_at (integer, only with ?fields); timeout_seconds; updated_at
 Relationships: event; location; print_station -> Station; theme -> Theme. Include: event, location, print_station, theme
 Associations: check_in_groups -> CheckInGroup [filter: canceled, printed, ready, skipped]; checked_in_at_check_ins -> CheckIn [standard filters]; event; location; print_station; theme
 

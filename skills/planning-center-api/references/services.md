@@ -260,7 +260,7 @@ Create attrs: quantity, time_id, time_preference_option_id (+ team via relations
 ## Organization
 Account-level settings. Endpoints: GET /services/v2
 Attributes: allow_mp3_download; beta; calendar_starts_on_sunday; ccli; ccli_auto_reporting_enabled; ccli_connected; ccli_reporting_enabled; created_at; date_format (US | EU); extra_file_storage_allowed; file_storage_exceeded; file_storage_extra_charges; file_storage_extra_enabled; file_storage_size; file_storage_size_used; id; legacy_id; music_stand_enabled; name; owner_name; people_allowed; people_remaining; projector_enabled; rehearsal_mix_enabled; rehearsal_pack_connected; required_to_set_download_permission (editor | administrator | site_administrator); secret; time_zone; twenty_four_hour_time; updated_at
-Associations (top-level collections): attachment_types; chat; email_templates; folders; media [filters above]; people; report_templates [filter: matrix, people, plans, without_defaults]; series; service_types [filter: no_parent]; songs; tag_groups [filter: arrangement, media, person, song]; teams [filter: editable, service_types]
+Associations (top-level collections): attachment_types; chat; email_templates; folders; media [filters above]; people; report_templates [filter: matrix, people, plans, without_defaults]; series; plans; service_types [filter: no_parent]; songs; tag_groups [filter: arrangement, media, person, song]; teams [filter: editable, service_types]
 
 ## Person
 An individual in Services (same id as People).
@@ -410,7 +410,7 @@ Folder path of a Service Type (read-only). Attributes: id; path (array)
 ## SignupSheet
 A position a person can sign up for.
 Endpoints: GET /people/{person_id}/available_signups/{as}/signup_sheets; …/{id}
-Attributes: display_times; group_key; id; position_name; sort_date; sort_index; team_name; title
+Attributes: display_times; group_key; id; plan_title; position_name; sort_date; sort_index; team_name; title
 Relationships: plan; team_position; team. Include: scheduled_people, signup_sheet_metadata
 Associations: scheduled_people -> ScheduledPerson; signup_sheet_metadata -> SignupSheetMetadata
 Actions: accept POST …/signup_sheets/{id}/accept (no payload)
@@ -443,7 +443,8 @@ Status of an in-progress songbook generation. Attributes: id; status; status_cod
 Maps a split team to time preference options for rehearsal/other times.
 Endpoints: GET /service_types/{st}/plan_times/{pt}/split_team_rehearsal_assignments; …/{id}; POST; PATCH …/{id}; DELETE …/{id}
 Attributes: id; schedule_special_service_times (boolean)
-Relationships: team -> Team; time_preference_options -> TimePreferenceOption (to_many). Include: team, time_preference_options
+Relationships: team -> Team; time_preference_options -> TimePreferenceOption (to_many). Include: none
+Associations: team -> Team
 Create/Update attrs: schedule_special_service_times
 
 ## Tag

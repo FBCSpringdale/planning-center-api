@@ -55,7 +55,8 @@ GET /people/v2/people/{id}/notes?include=category
 GET /people/v2/people/{id}/workflow_cards?include=workflow,current_step
 GET /services/v2/people/{id}/schedules?filter=future&include=plan_times
 GET /giving/v2/people/{id}/donations?include=designations&order=-received_at
-GET /groups/v2/people/{id}/memberships?include=group
+GET /groups/v2/people/{id}/memberships
+GET /groups/v2/people/{id}/groups
 GET /check-ins/v2/people/{id}/check_ins?order=-created_at
 ```
 

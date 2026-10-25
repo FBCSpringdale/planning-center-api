@@ -52,7 +52,7 @@ Base URL for everything: `https://api.planningcenteronline.com`. File uploads go
 - `per_page` 1–100 (default 25), `offset`; follow `links.next`. `meta.total_count` is the full count. Offsets above 30,000 get a lower rate limit — prefer `where[updated_at][gte]` windows over deep paging.
 - Date-only values on `date_time` attributes are interpreted in the organization's time zone and expanded to the whole day; pass full timestamps to be explicit. Responses are always UTC.
 
-**Rate limits.** 100 requests / 20 s per user by default (75 when offset > 30,000); never hard-code. Read `X-PCO-API-Request-Rate-Limit`, `-Count`, `-Period`; on `429` wait `Retry-After` seconds. Only auto-retry idempotent requests.
+**Rate limits.** 100 requests / 20 s per user by default (75 when offset > 30,000); never hard-code. Read `X-PCO-API-Request-Rate-Limit`, `-Count`, `-Period`; on `429` wait `Retry-After` seconds and retry (a 429 is rejected before processing, so writes can be replayed too). Only auto-retry 500/503 for idempotent requests.
 
 **Errors.** 400 malformed, 401 bad credentials, 403 permission/scope/User-Agent, 404 bad id or hidden, 409 duplicate create race, 422 validation (body names each invalid attribute), 429 rate limit, 500/503 retry later. Auth error hints are animal names (PELICAN = missing scope, BABOON = expired token, CAPUCHIN = revoked, TRASH_PANDA = no access to that app, CHINCHILLA = unknown client) — full table in `references/guides.md`.
 
@@ -94,7 +94,7 @@ Base URL for everything: `https://api.planningcenteronline.com`. File uploads go
 - People `search_name_or_email_or_phone_number` is the broadest person search; `search_phone_number_e164` for normalized phones.
 - Custom field checkbox values: POST one FieldDatum per checked option with the option *string* as `value`; uncheck by DELETE.
 - Form submissions via API: option-field values must be the FormFieldOption **id**, not its label; the token user needs People Editor + form manage rights.
-- Services `Plan` has no date attributes — dates come from `PlanTime` records; `sort_date` is derived. `Plan.items` are reordered with the `item_reorder` action, not by PATCHing `sequence`.
+- Services `Plan` has no writable date attributes — `dates`, `short_dates`, `sort_date` and `last_time_at` are derived from its `PlanTime` records; create/edit PlanTimes to set dates. `Plan.items` are reordered with the `item_reorder` action, not by PATCHing `sequence`.
 - Services `PlanPerson.status` accepts `C`/`U`/`D` or `Confirmed`/`Unconfirmed`/`Declined`; set `prepare_notification: true` to queue the scheduling email.
 - Services `assign_tags` actions **replace** the whole tag set — send every tag you want to keep.
 - Giving money is integer cents; fees are 0 or negative; online (Stripe) and recurring donations are read-only; API-created donations must live in a Batch; `?with_totals=true` adds totals to `meta`.

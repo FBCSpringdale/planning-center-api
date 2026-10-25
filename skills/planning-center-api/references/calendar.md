@@ -184,7 +184,6 @@ A question a requester must answer when booking a resource.
 Endpoints: GET /resource_questions; GET /resources/{r}/resource_questions; …/{id}; POST /resources/{resource_id}/resource_questions; PATCH /resource_questions/{id}; DELETE /resource_questions/{id}
 Attributes: choices (|-separated, for dropdown); created_at; description; id; kind (dropdown | paragraph | text | yesno | section_header); multiple_select (boolean); optional (boolean); position; question; updated_at
 Relationships: resource. Where: created_at, kind, updated_at
-Associations: resource -> Resource
 Create/Update attrs: choices, description, kind, multiple_select, optional, position, question
 
 ## ResourceSuggestion
@@ -214,4 +213,4 @@ Endpoints: GET /tag_groups [filter: required]; …/{id}; POST; PATCH …/{id}; D
 Attributes: created_at; id; name; required (boolean — tags from this group must be applied when creating an event); updated_at
 Relationships: events, tags (to_many); organization. Include: events, tags. Order: name. Where: created_at, name, updated_at
 Associations: events -> Event; tags -> Tag
-Create/Update attrs: name (required)
+Create/Update attrs: name (required), required
