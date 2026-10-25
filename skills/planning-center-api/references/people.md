@@ -14,7 +14,7 @@ Conventions used below:
 - `Include` = valid `?include=` values. `*` = also assignable as a relationship on create/update.
 - `Where` = `?where[attr]=value` attributes (types shown). `Order` = `?order=attr` (prefix `-` to reverse).
 - `Associations` = child endpoints hanging off a member: `GET {member}/<suffix>`. `[filter: a, b]` = values accepted by `?filter=`.
-- `Reachable from` = every parent path that returns this resource (how you traverse to it). Filters shown apply to that parent path.
+- `Reachable from` = every parent path that returns this resource (how you traverse to it). Filters shown apply to that parent path. Paths with a leading `/` are complete (relative to the base URL); paths without one (e.g. `plan_people/{id}/person`) are a suffix to append to the full path of that parent record, not a top-level route.
 - All collections paginate with `per_page` (1–100, default 25) and `offset`.
 - "permissions: n/d" = not documented on the page; the acting user's People permission level still applies.
 
@@ -134,13 +134,12 @@ Relationships: organization -> Organization (to_one)
 Reachable from: /people/{person_id}/connected_people (Person)
 
 ## CustomSender
-A sender identity usable when sending emails. Creating or updating the email address starts verification.
-Endpoints (inferred — the docs page renders truncated paths `/people/v2` and `/people/v2/{id}`; the collection name is `custom_senders`): GET /custom_senders; GET /custom_senders/{id}; POST /custom_senders
+A custom sender that can be used when sending emails. Read-only.
+Endpoints: none documented — the docs list no path for this resource (it renders as `/people/v2`) and no parent links to it; don't call `/custom_senders` without confirming it in `meta` first.
 Attributes: created_at; email_address (string); expired (boolean); id; name (string); updated_at; verification_requested_at (date_time); verification_status (string); verified (boolean); verified_at (date_time)
 Relationships: custom_sender_shares -> CustomSenderShare
 Order: created_at, name, updated_at, verification_requested_at, verified_at
-Associations: custom_sender_shares -> CustomSenderShare
-Create: POST /custom_senders — assignable attributes are not listed on the page; `name` and `email_address` are the only non-derived attributes. Creating/updating the email address begins verification. Verify with a `GET` first (`meta.can_query_by`) before relying on this in production.
+Actions: send_verification — begins verification when a custom sender's email address is created or updated (path not documented)
 
 ## Email
 An email address and location.

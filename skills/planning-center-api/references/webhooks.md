@@ -2,7 +2,7 @@
 
 Base URL: `https://api.planningcenteronline.com/webhooks/v2`
 Documented version: `2022-10-20` (also 2018-08-01). **No OAuth scope required** for the Webhooks endpoints.
-2022-10-20 changes: Event gained a `last_delivery` include; batch creation uses SubscriptionVertex.
+2022-10-20 change: `Subscription` replaced by `WebhookSubscription`.
 OpenAPI: `https://api.planningcenteronline.com/webhooks/v2/open_api/2022-10-20`
 Docs: `https://api.planningcenteronline.com/docs/apps/webhooks/versions/2022-10-20/vertices/<snake_case_resource>` and `https://api.planningcenteronline.com/docs/overview/webhooks`
 UI: `https://api.planningcenteronline.com/webhooks` (create subscriptions, inspect requests/responses, redeliver manually).
@@ -62,7 +62,7 @@ Relationships: event -> Event. Order: created_at
 A single webhook event belonging to a subscription.
 Endpoints: GET /webhook_subscriptions/{ws}/events; …/{id}
 Attributes: created_at; id; payload (JSON string); status (pending | delivered | failed | skipped | duplicated | ignored_failed | ignored_skipped | ignored_duplicated); updated_at; uuid
-Relationships: subscription; person. Include: last_delivery (2022-10-20+)
+Relationships: subscription; person. Include: none
 Order: created_at. Where: status, uuid
 Associations: deliveries -> Delivery
 Actions: ignore POST …/events/{id}/ignore; redeliver POST …/events/{id}/redeliver (no payload)

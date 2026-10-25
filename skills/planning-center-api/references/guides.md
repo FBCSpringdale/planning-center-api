@@ -64,7 +64,7 @@ Required on all requests. Use something identifying, e.g. `My Planning Center Ap
 - Default **100 requests per 20 seconds per authenticated user**. Requests with `offset` > 30,000 are limited to **75 per 20 seconds**. Endpoints can have their own limits; limits can change without notice — never hard-code them.
 - Headers on every response: `X-PCO-API-Request-Rate-Limit` (max in period), `X-PCO-API-Request-Rate-Period` (e.g. `20 seconds`), `X-PCO-API-Request-Rate-Count` (used so far), and on 429 `Retry-After` (seconds).
 - 429 body: `{"errors":[{"code":"429","detail":"Rate limit exceeded: 118 of 100 requests per 20 seconds"}]}`.
-- Client pattern: read the headers; on 429 sleep `Retry-After` (default 1s) and retry (idempotent requests only — don't blindly replay POSTs); proactively slow down when count ≥ 80% of limit; cap retries (e.g. 5).
+- Client pattern: read the headers; on 429 sleep `Retry-After` (default 1s) and retry (PCO's guide hedges on replaying POSTs; a 429 is rejected before processing, and `pco_client.py` retries every method on 429 but 500/503 only for GET); proactively slow down when count ≥ 80% of limit; cap retries (e.g. 5).
 
 ## 4. JSON:API format
 

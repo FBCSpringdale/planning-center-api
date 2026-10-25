@@ -36,3 +36,4 @@ npx skills add FBCSpringdale/planning-center-api
 - `skills/planning-center-api/references/`: one file per product
 - `skills/planning-center-api/scripts/pco_client.py`: Python client and CLI
 - `skills/planning-center-api/evals/`: eval cases
+- `tests/test_pco_client.py`: offline checks for the client (`python3 tests/test_pco_client.py`)
